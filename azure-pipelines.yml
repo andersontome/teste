@@ -1,0 +1,94 @@
+variables:
+ - name: projectName
+   value: anl-b2u-bpma
+
+pool:
+  name: Azure Pipelines
+  demands: maven
+  vmImage: 'ubuntu-latest'
+trigger:
+  batch: true
+  branches:
+    include:
+    - CDT
+    - QA 
+    - PP
+    - master
+
+
+parameters:
+- name: mavenPOMFile
+  displayName: Path of pom.xml file
+  type: string
+  default: pom.xml
+
+resources:
+  repositories:
+    - repository: PolarisTemplateRepo # Repository name needs to stay the same!
+      type: github
+      name: Maersk-Global/DOT-AzureDevops-CICD-templates
+      ref: refs/heads/master # use master branch as default
+      endpoint: GitHub-Polaris-Scanning #Replace with your GH connection
+    - repository: BDTemplateRepo # Repository name can be different
+      type: github
+      name: Maersk-Global/DOT-AzureDevops-CICD-templates
+      ref: refs/heads/master
+      endpoint: GitHub-Polaris-Scanning #Replace with your GH connection
+
+stages:
+  - stage: SonarQubeScan
+    dependsOn: []
+    displayName: SonarQubeScan
+    jobs:
+    - job: Prepare
+      displayName: Prepare Analysis on SonarQubeScan
+      steps:
+      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+        displayName: 'Prepare analysis on SonarQube'
+        inputs:
+          SonarQube: 'SonarQubeConnection'
+          scannerMode: Other
+          extraProperties: |
+            sonar.branch.name='$(build.SourceBranchName)'
+      - task: AzureCLI@2
+        displayName: 'Azure CLI '
+        inputs:
+          azureSubscription: 'AliancaBI_Test_IaC'
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            sed -i 's|<name>.*<\/name>|<name>$(projectName)<\/name>|g' pom.xml
+            cat pom.xml
+      - task: Maven@3
+        displayName: 'Maven pom.xml'
+        inputs:
+          mavenPomFile: ${{ Parameters.mavenPOMFile }}
+          options: '-DskipTests --settings settings.xml'
+          publishJUnitResults: false
+          sonarQubeRunAnalysis: true
+      - task: SonarSource.sonarqube.291ed61f-1ee4-45d3-b1b0-bf822d9095ef.SonarQubePublish@4
+        displayName: 'Publish Quality Gate Result'    
+  - stage: Build
+    dependsOn: []
+    displayName: Building Artifact
+    jobs:
+    - job: MavenCompile
+      displayName: Maven Compile
+      steps:
+      - task: Maven@3
+        displayName: 'Maven pom.xml'
+        inputs:
+          mavenPomFile: ${{ Parameters.mavenPOMFile }}
+          options: '-DskipTests --settings settings.xml'
+      - task: CopyFiles@2
+        displayName: 'Copy Files to Directory: $(build.SourceBranchName) '
+        inputs:
+          SourceFolder: '$(system.defaultworkingdirectory)'
+          Contents: '**/*.jar'
+          TargetFolder: '$(build.artifactstagingdirectory)/$(build.SourceBranchName)'
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: $(build.SourceBranchName)'
+        inputs:
+          PathtoPublish: '$(build.artifactstagingdirectory)/$(build.SourceBranchName)'
+          artifactName: '$(build.SourceBranchName)'
+        condition: succeeded()  
