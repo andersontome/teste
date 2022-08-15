@@ -1,59 +1,84 @@
 package com.facility.integrator.domain.model.facility;
 
-import java.io.Serializable;
-import java.util.List;
+import com.facility.integrator.domain.model.Facility;
+import com.facility.integrator.domain.model.job.JobExecution;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.io.Serializable;
 
 @Data
 @Entity
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class FacilityBusinessObject  implements Serializable {
-	private static final long serialVersionUID = 110828100477053830L;
+@Builder
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class FacilityBusinessObject implements Serializable {
 
-	@Id
-	@EqualsAndHashCode.Include
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idFacilityBusinessObject;
-	
-	private String code;
-	private String version;
+    private static final long serialVersionUID = 110828100477053830L;
 
-	@JsonProperty("chronology")
-	@OneToMany(mappedBy = "facilityBusinessObject", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<FacilityChronology> facilityChronology;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long idFacilityBusinessObject;
 
-	@JsonProperty("facilityDetails")
-	@OneToOne(cascade = CascadeType.ALL)
-	private FacilityDetails facilityFacilityDetails;
+    @Column
+    String code;
 
-	@JsonProperty("facilityStatus")
-	@OneToMany(mappedBy = "facilityBusinessObject", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<FacilityStatus> facilityFacilityStatus;
-	
-	@JsonProperty("facilityCsCode")
-	@OneToMany(mappedBy = "facilityBusinessObject", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<FacilityCsCode> facilityFacilityCsCode;
-	
-	@JsonProperty("facilityCompassCode")
-	@OneToMany(mappedBy = "facilityBusinessObject", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<FacilityCompassCode> facilityFacilityCompassCode;
+    @Column
+    Boolean customerFacility;
 
-	@JsonProperty("extRefCodeType")
-	@OneToMany(mappedBy = "facilityBusinessObject", cascade = CascadeType.ALL)
-	private List<FacilityExtRefCodeType> facilityExtRefCodeType;
+    @Column
+    String version;
 
-	private Boolean customerFacility;
-	
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "facility_facility_details_id_facility_details")
+    FacilityDetails facilityDetails;
+
+    @OneToOne(mappedBy = "facilityBusinessObject", cascade = CascadeType.PERSIST)
+    FacilityStatus facilityStatus;
+
+    @OneToOne(mappedBy = "facilityBusinessObject", cascade = CascadeType.PERSIST)
+    FacilityCsCode facilityCsCode;
+
+    @OneToOne(mappedBy = "facilityBusinessObject", cascade = CascadeType.PERSIST)
+    FacilityCompassCode facilityCompassCode;
+
+    @OneToOne(mappedBy = "facilityBusinessObject", cascade = CascadeType.PERSIST)
+    FacilityExtRefCodeType facilityExtRefCodeType;
+
+    @OneToOne(mappedBy = "facilityBusinessObject", cascade = CascadeType.PERSIST)
+    Facility facility;
+
+    @ManyToOne
+    @JoinColumn(name = "id_job_execution", nullable = false, updatable = false)
+    JobExecution jobExecution;
+
+    public void bindAggregates(
+            final FacilityDetails facilityDetails,
+            final FacilityStatus facilityStatus,
+            final FacilityCsCode facilityCsCode,
+            final FacilityCompassCode facilityCompassCode,
+            final FacilityExtRefCodeType facilityExtRefCodeType,
+            final Facility facility
+    ) {
+        this.facilityDetails = facilityDetails;
+        this.facilityStatus = facilityStatus;
+        this.facilityCsCode = facilityCsCode;
+        this.facilityCompassCode = facilityCompassCode;
+        this.facilityExtRefCodeType = facilityExtRefCodeType;
+        this.facility = facility;
+    }
 }

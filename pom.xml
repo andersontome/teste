@@ -34,7 +34,8 @@
     		<artifactId>poi-ooxml</artifactId>
     		<version>5.2.2</version>
 		</dependency>
-		
+
+
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
@@ -57,11 +58,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>com.intercab</groupId>
-			<artifactId>intercab-utils</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.intercab</groupId>-->
+<!--			<artifactId>intercab-utils</artifactId>-->
+<!--			<version>1.0-SNAPSHOT</version>-->
+<!--		</dependency>-->
 
 		<!-- <dependency>
 			<groupId>com.intercab</groupId>
@@ -69,23 +70,23 @@
 			<version>1.0-SNAPSHOT</version>
 		</dependency> -->
 
-		<dependency>
-			<groupId>com.intercab</groupId>
-			<artifactId>intercab-exception</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.intercab</groupId>-->
+<!--			<artifactId>intercab-exception</artifactId>-->
+<!--			<version>1.0-SNAPSHOT</version>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>com.intercab</groupId>
-			<artifactId>intercab-log</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-data-mongodb</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.intercab</groupId>-->
+<!--			<artifactId>intercab-log</artifactId>-->
+<!--			<version>1.0-SNAPSHOT</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.springframework.boot</groupId>-->
+<!--					<artifactId>spring-boot-starter-data-mongodb</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
 
 
 		<dependency>
@@ -174,15 +175,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jackson</artifactId>
-			<version>3.18.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.11.3</version>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-jackson-starter</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>

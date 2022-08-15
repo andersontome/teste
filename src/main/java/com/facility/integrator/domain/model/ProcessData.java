@@ -1,27 +1,36 @@
 package com.facility.integrator.domain.model;
 
-import java.io.Serializable;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.io.Serializable;
 
 @Data
 @Entity
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProcessData implements Serializable {
+
 	private static final long serialVersionUID = 776620290485943540L;
 
 	@Id
-	@EqualsAndHashCode.Include
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idProcessData;
+	Long idProcessData;
 
-	private String changeType;
-	private String versionNumber;
+	@Column
+	String changeType;
 
+	@Column
+	String versionNumber;
 }
